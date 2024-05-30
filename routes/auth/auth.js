@@ -98,13 +98,16 @@ router.put('/api/users/:id', authenticateToken, async (req, res) => {
         const { id } = req.params;
         const { username, role } = req.body;
         const userId = req.userId;
-        console.log(req);
-        const userRole = req.role;
+        const userRole = req.role; 
+        if (!userId) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
         const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        if (username){
+        if (username) {
             user.username = username;
         }
         if (role) {
@@ -114,13 +117,11 @@ router.put('/api/users/:id', authenticateToken, async (req, res) => {
         await user.save();
 
         res.status(200).json({ message: 'User updated successfully', user });
-
     } catch (err) {
-        console.log(err);
+        console.error(err);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
-
 router.post('/api/logout', authenticateToken, (req, res) => {
     res.status(200).json({ message: 'Logged out successfully.' });
 });

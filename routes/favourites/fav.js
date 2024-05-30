@@ -22,8 +22,9 @@ favRouter.get('/api/favorites', authenticateToken, async (req, res) => {
 
 favRouter.post('/api/favorites', authenticateToken, async (req, res) => {
   try {
-    const { poemId } = req.body;
-
+    const poemId = req.body.PoemId;
+    console.log(req.body);
+    console.log(poemId);
     const poem = await Poem.findById(poemId);
     if (!poem) {
       return res.status(404).json({ message: 'Poem not found' });
@@ -61,7 +62,6 @@ favRouter.delete('/api/favorites/:poemId', authenticateToken, async (req, res) =
   }
 });
 
-// PUT method to update a poem
 favRouter.put('/api/poems/:poemId', authenticateToken, async (req, res) => {
   try {
     const { title, content, author } = req.body;
