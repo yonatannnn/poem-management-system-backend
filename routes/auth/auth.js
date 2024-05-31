@@ -96,23 +96,24 @@ router.get('/api/users/:id', authenticateToken, async (req, res) => {
 router.put('/api/users/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const { username } = req.body;
+        const { username, role } = req.body;
         const userId = req.userId;
-        console.log(userId)
-
-        if (userId !== id) {
-            return res.status(403).json({ message: 'You are not authorized to update this account.' });
-        }
-
+        console.log(req);
+        const userRole = req.role;
         const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
+        if (username){
+            user.username = username;
+        }
+        if (role) {
+            user.role = role;
+        }
 
-        user.username = username;
         await user.save();
 
-        res.status(200).json({ message: 'Username updated successfully', user });
+        res.status(200).json({ message: 'User updated successfully', user });
 
     } catch (err) {
         console.log(err);
@@ -132,9 +133,6 @@ router.delete('/api/users/:id', authenticateToken, async (req, res) => {
         const userId = req.userId;
         console.log(userId)
 
-        if (userId !== id) {
-            return res.status(403).json({ message: 'You are not authorized to delete this account.' });
-        }
 
         const user = await User.findById(id);
 
